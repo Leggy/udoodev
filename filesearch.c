@@ -22,6 +22,13 @@ int fileSearch(char* filename, char* text, dictionary* dict) {
         return 2;
     }
     
+    char* line = NULL;
+    size_t len = 0;
+    
+    while(getline(&line, &len, file) != -1) {
+        printf("%s", line);
+    }
+    
     
     return 0;
 }

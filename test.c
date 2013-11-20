@@ -12,6 +12,8 @@ void fileSearchTest2(void);
 void fileSearchTest3(void);
 void fileSearchTest4(void);
 void fileSearchTest5(void);
+void fileSearchTest6(void);
+void fileSearchTest7(void);
 
 
 int main(int argc, char** argv) {
@@ -24,6 +26,8 @@ int main(int argc, char** argv) {
     fileSearchTest3();
     fileSearchTest4();
     fileSearchTest5();
+    fileSearchTest6();
+    fileSearchTest7();
    
     return 0;
 }
@@ -104,5 +108,19 @@ void fileSearchTest5() {
         printf("5 - FileSearch Success\n");
     } else {
         printf("5 - FileSearch Failure\n");
+    }
+}
+
+void fileSearchTest6() {
+    printf("6 - \n");
+    fileSearch("testFile", "Text", NULL);
+}
+
+void fileSearchTest7() {
+
+    if (fileSearch("testFile", "Text", NULL) == 0) {
+        printf("7 - FileSearch Success\n");
+    } else {
+        printf("7 - FileSearch Failure\n");
     }
 }
