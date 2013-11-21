@@ -5,5 +5,6 @@
 
 
 /* FUNCTION PROTOTYPES */
-int* preprocess(char* pattern);
-int kmpSearch(char* text, char* pattern);
+size_t *preprocess(const char *pattern);
+size_t *nPreprocess(const char *pattern);
+size_t kmpSearch(const char *text, const char *pattern);

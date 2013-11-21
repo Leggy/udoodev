@@ -1,63 +1,72 @@
+#include <stdlib.h>
+
 #include "kmp.h"
 
-/*Preprocesses the text, creating the overlap table.*/
-int* preprocess(char* pattern) {
-    int tableLength = strlen(pattern);
-    //printf("B4 malloc table: %d \n", tableLength);
-    int* table = NULL;
-    table = malloc(sizeof(int) * tableLength);
-    //printf("After malloc\n");
-    //Pattern[1] cannot have a proper prefix or suffix.
-    table[0] = 0;
-    table[1] = 0;
+/* Preprocesses the text, creating the overlap table. */
+size_t *preprocess(const char *pattern)
+{
+	size_t tableLength = 0;
+	size_t *table = NULL;
+	size_t byteSized = 0;
+	
+	if(!pattern || !(tableLength = strlen(pattern), byteSized = sizeof(size_t)*tableLength) || !(table = malloc(byteSized)))
+		return NULL;
 
-    char c;
-    int v;
-    for (int k = 1; k < tableLength; k++) {
-        //The current character, and overlap so far.
-        c = pattern[k];
-        v = table[k];
-        
-        //Until overlap can be extended.
-        while (pattern[v] != c && v != 0) {
-            //Finding the next largest precomputed overlap.
-            v = table[v];
-        }
+	memset(table, 0, byteSized);
+	table[0] = table[1] = 0;
 
-        if (pattern[v] == c) {
-            //Extend current overlap.
-            table[k + 1] = v + 1;
-        } else {
-            //No overlap exists.
-            table[k + 1] = 0;
-        }
-    }
-    return table;
+	/* Until overlap can be extended */
+	for(size_t i = 1, v; i < tableLength; ++i)
+	{
+		v = table[i];
+		/* Finding the next largest precomputed overlap */
+		for(; (pattern[v] != pattern[i]) && v; v = table[v]);
+
+		if(pattern[v] == pattern[i])
+			table[i+1] = v + 1; /* Extend current overlap */
+		
+	}
+
+	/* This is a HACK */
+	memmove(table, &table[1], byteSized);
+	return table;
 }
 
+/* Precondition: text, pattern must NOT be NULL and MUST point to valid strings */
 /*Search the text for the first appearance of the pattern.*/
-int kmpSearch(char* text, char* pattern) {
-    int m = 0;
-    int i = 0;
-    printf("KMP: %s %s\n", text, pattern);
-    int* table = preprocess(pattern);
-    
-    while (m + i < strlen(text)) {
-        if (pattern[i] == text[m + i]) {
-            if (i == strlen(pattern) - 1) {
-            free(table);
-                return m;
-            }
-            i++;        
-        } else {
-            m = m + 1 - table[i];
-            if (table[i] > -1) {
-                i = table[i];
-            } else {
-                i = 0;
-            }
-        } 
-    }
-    free(table);
-    return -1;
+size_t kmpSearch(const char *text, const char *pattern)
+{
+	size_t m = 0;
+	size_t i = 0;
+	size_t patternLength = strlen(pattern);
+	size_t textLen = strlen(text);
+	size_t ret = textLen;
+
+	printf("KMP: %s %s\n", text, pattern);
+
+	size_t *table = preprocess(pattern);
+
+	if(!table)
+		return textLen;
+
+	while((m + i) < textLen)
+	{
+		if(pattern[i] == text[m+i])
+		{
+			if(i == (patternLength - 1))
+			{
+				ret = m;
+				break;
+			}
+			++i;
+		}
+		else
+		{
+			m += 1 - table[i];
+			i = table[i];
+		}
+	}
+
+	free(table);
+	return ret;
 }
