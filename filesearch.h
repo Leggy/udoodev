@@ -13,5 +13,6 @@ typedef struct dict {
    the second being the text to search through. */
    
 int fileSearch(char* filename, char* text, dictionary* dict);
+int subSearch(char* text, char* pattern);
 
 

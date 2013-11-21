@@ -3,7 +3,10 @@
 /*Preprocesses the text, creating the overlap table.*/
 int* preprocess(char* pattern) {
     int tableLength = strlen(pattern);
-    int* table = malloc(sizeof(int) * tableLength);
+    //printf("B4 malloc table: %d \n", tableLength);
+    int* table = NULL;
+    table = malloc(sizeof(int) * tableLength);
+    //printf("After malloc\n");
     //Pattern[1] cannot have a proper prefix or suffix.
     table[0] = 0;
     table[1] = 0;
@@ -33,14 +36,16 @@ int* preprocess(char* pattern) {
 }
 
 /*Search the text for the first appearance of the pattern.*/
-int search(char* text, char* pattern) {
+int kmpSearch(char* text, char* pattern) {
     int m = 0;
     int i = 0;
+    printf("KMP: %s %s\n", text, pattern);
     int* table = preprocess(pattern);
     
     while (m + i < strlen(text)) {
         if (pattern[i] == text[m + i]) {
             if (i == strlen(pattern) - 1) {
+            free(table);
                 return m;
             }
             i++;        
@@ -53,5 +58,6 @@ int search(char* text, char* pattern) {
             }
         } 
     }
-    return strlen(text);
+    free(table);
+    return -1;
 }
