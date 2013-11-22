@@ -1,5 +1,5 @@
 #include <stdlib.h>
-
+#include <assert.h>
 #include "kmp.h"
 
 /* Preprocesses the text, creating the overlap table. */
@@ -7,28 +7,22 @@ size_t *preprocess(const char *pattern)
 {
 	size_t tableLength = 0;
 	size_t *table = NULL;
-	size_t byteSized = 0;
 	
-	if(!pattern || !(tableLength = strlen(pattern), byteSized = sizeof(size_t)*tableLength) || !(table = malloc(byteSized)))
+	if(!pattern || !(tableLength = strlen(pattern)) || !(table = malloc(sizeof(size_t)*tableLength)))
 		return NULL;
 
-	memset(table, 0, byteSized);
-	table[0] = table[1] = 0;
+	table[0] = 0;
 
-	/* Until overlap can be extended */
-	for(size_t i = 1, v; i < tableLength; ++i)
+	for(size_t i = 1, j = 0; i < tableLength;)
 	{
-		v = table[i];
-		/* Finding the next largest precomputed overlap */
-		for(; (pattern[v] != pattern[i]) && v; v = table[v]);
-
-		if(pattern[v] == pattern[i])
-			table[i+1] = v + 1; /* Extend current overlap */
-		
+		if(pattern[i] == pattern[j])
+			table[i++] = j++ + 1;
+		else if(j > 0)
+			j = table[j-1];
+		else
+			table[i++] = 0;
 	}
 
-	/* This is a HACK */
-	memmove(table, &table[1], byteSized);
 	return table;
 }
 
