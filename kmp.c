@@ -35,16 +35,16 @@ size_t kmpSearch(const char *text, const char *pattern)
 	size_t patternLength = strlen(pattern);
 	size_t textLen = strlen(text);
 	size_t ret = textLen;
-
-	printf("KMP: %s %s\n", text, pattern);
+	size_t incr = 0;
 
 	size_t *table = preprocess(pattern);
-
 	if(!table)
 		return textLen;
 
 	while((m + i) < textLen)
 	{
+		//fprintf(stderr, "((m + i) < textLen\n");
+		//fprintf(stderr, "%zu < %zu\n", (m + i), textLen);
 		if(pattern[i] == text[m+i])
 		{
 			if(i == (patternLength - 1))
@@ -56,7 +56,13 @@ size_t kmpSearch(const char *text, const char *pattern)
 		}
 		else
 		{
-			m += 1 - table[i];
+			incr = 1 - table[i];
+			//fprintf(stderr, "%zu\n", ( 1 - table[i]));
+			if (!incr) {
+				free(table);
+				return ret;
+			}
+			m += incr;
 			i = table[i];
 		}
 	}

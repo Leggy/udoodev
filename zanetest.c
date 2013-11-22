@@ -22,11 +22,28 @@ void preprocessTest(const char *pszPattern)
 	free(table);
 }
 
+void kmpTest(const char *text, const char *pattern) {
+
+	assert(text);	
+	assert(pattern);
+
+	fprintf(stderr, "Searching \"%s\", \"%s\"\n", text, pattern);
+	size_t kmp = kmpSearch(text, pattern);
+	fprintf(stderr, "Result: %zu\n\n", kmp);
+
+
+}
+
 int main(int main, char **argv)
 {
 	preprocessTest("pie");
 	preprocessTest("ATTATACA");
 	preprocessTest("AABAAA");
 	preprocessTest("BB");
+	
+	kmpTest("ABABABC", "ABC");
+	kmpTest("ABBABABC", "BB");
+	kmpTest("ABABABCA", "BB");
+	
 	return 0;
 }

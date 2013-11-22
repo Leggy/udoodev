@@ -6,13 +6,13 @@
 typedef struct dict {
     struct dict* next;
     char* word;
-    int num;
+    size_t num;
 } dictionary;
 
 /* FileSearch takes two strings (char *) as input, the first being a filename,
    the second being the text to search through. */
    
-int fileSearch(char* filename, char* text, dictionary* dict);
-int subSearch(char* text, char* pattern);
+size_t fileSearch(const char* filename, const char* text, dictionary* dict);
+size_t subSearch(char* text, const char* pattern);
 
 

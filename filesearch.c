@@ -1,8 +1,8 @@
 #include "filesearch.h"
 
-/*  FileSearch takes two strings (char *) and a dictionary pointer as input, the
+/*  FileSearch takes two strings (char *) and a dictionary posize_ter as input, the
     first string being a filename, the second being the text to search through.
-    The dictionary pointer should point to NULL, it is allocated in this scope.
+    The dictionary posize_ter should posize_t to NULL, it is allocated in this scope.
    
     Return Values:
         0: Working correctly
@@ -10,7 +10,7 @@
         2: filename invalid
          */
 
-int fileSearch(char* filename, char* text, dictionary* dict) {
+size_t fileSearch(const char* filename, const char* text, dictionary* dict) {
     if (filename == NULL || text == NULL || strlen(filename) == 0
             || strlen(text) == 0) {
         return 1;
@@ -28,7 +28,7 @@ int fileSearch(char* filename, char* text, dictionary* dict) {
     char* line = NULL;
     size_t len = 0;
     
-    int occurances;
+    size_t occurances;
     
     while(getline(&line, &len, file) != -1) {
         occurances = subSearch(line, text);
@@ -37,7 +37,7 @@ int fileSearch(char* filename, char* text, dictionary* dict) {
         dictTemp->num = occurances;
         dictTemp->next = malloc(sizeof(dictionary));
         dictTemp = dictTemp->next;*/
-        printf("%s  %d\n", line, occurances);
+        printf("%s  %s  %zu\n", line, text, occurances);
     }
     printf("Closing file\n");
     fclose(file);
@@ -45,19 +45,14 @@ int fileSearch(char* filename, char* text, dictionary* dict) {
 }
 
 /* Returns the number of occurances of the pattern in the text. */
-int subSearch(char* text, char* pattern) {
-    int occurances = 0;
+size_t subSearch(char* text, const char* pattern) {
+    size_t occurances = 0;
     char* temp = text;
-    int index = 0;
+    size_t index = 0;
     
-    printf("subsearch: \n");
-    printf("temp: %s\n", temp);
-    printf("kmp: %d\n", kmpSearch(temp, pattern));
-    while ((index = kmpSearch(temp, pattern)) != -1) {
-        printf("index: %d\n", index);
+    while ((index = kmpSearch(temp, pattern)) != strlen(temp)) {
         occurances += 1;
         if (strlen(pattern) + index >= strlen(temp)) {
-            printf("Breaking\n");
             break;
         } else {
             temp += strlen(pattern) + index;
